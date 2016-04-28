@@ -1,12 +1,21 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    facebook-messenger (0.3.0)
+      httparty (~> 0.13.7)
+      rack (~> 1.6.4)
+    httparty (0.13.7)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
+    json (1.8.3)
+    multi_xml (0.5.5)
     rack (1.6.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  facebook-messenger
   rack
 
 BUNDLED WITH
