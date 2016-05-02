@@ -36,7 +36,7 @@ end
 
 def random_bot_move(friend, text)
   game = @games[friend]
-  possible_moves = Array.new(2, (0..8).to_a).flatten.combination(2).uniq
+  possible_moves = Array.new(2, (0..8).to_a).flatten.combination(2).to_a.uniq
 
   possible_moves.shuffle.each do |x, y|
     begin
