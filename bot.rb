@@ -1,12 +1,40 @@
 include Facebook::Messenger
 
+@log ||= Hash.new { |h, k| h[k] = [] }
+
+def log(friend, message)
+  @log[friend] << message
+end
+
+def friends
+  @log.keys
+end
+
+def friends?(friend)
+  @log.key?(friend)
+end
+
+def messages(friend)
+  @log[friend]
+end
+
 Bot.on(:message) do |message|
+  friend = message.sender
+
+  if friends?(friend)
+    message = "Hi again, #{friend}"
+  else
+    message = "Hello, friend..."
+  end
+
   Bot.deliver(
-    recipient: message.sender,
+    recipient: friend,
     message: {
-      text: "Hello, friend..."
+      text: message
     }
   )
+
+  log(message.sender, message)
 end
 
 Facebook::Messenger.configure do |config|
