@@ -46,7 +46,7 @@ def random_bot_move(friend, text)
     rescue Game::IllegalMove
     end
   end
-  new_game(friend)
+  new_game(friend, text)
   text.puts "No where else to go...starting a new game =p"
 end
 
@@ -91,7 +91,7 @@ If you want to start a new game, just say "resign" ^^
 I'll go first =).
     TEXT
 
-    new_game(friend)
+    new_game(friend, text)
   end
   text.puts games[friend].board.to_s
   text = text.string
