@@ -1,9 +1,13 @@
 include Facebook::Messenger
 
+puts "Bot Coming online"
+
 @log ||= Hash.new { |h, k| h[k] = [] }
 
 def log(friend, message)
   @log[friend] << message
+
+  puts "New message from Friend: #{friend}"
 end
 
 def friends
@@ -27,6 +31,8 @@ Bot.on(:message) do |message|
     message = "Hello, friend..."
   end
 
+  log(message.sender, message)
+
   Bot.deliver(
     recipient: friend,
     message: {
@@ -34,7 +40,7 @@ Bot.on(:message) do |message|
     }
   )
 
-  log(message.sender, message)
+  puts "Bot sending message: #{message}"
 end
 
 Facebook::Messenger.configure do |config|
