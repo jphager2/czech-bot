@@ -24,10 +24,8 @@ def new_game(friend, text)
 end
 
 def play(friend, x, y, text)
-  x = 1 if x < 1 || x > 9
-  y = 1 if y < 1 || y > 9
-  x -= 1
-  y -= 1
+  x = 0 if x < 0 || x > 8
+  y = 0 if y < 0 || y > 8
   game = @games[friend]
   game.white(x, y)
   puts "Friend playing at x: #{x}, y: #{y}"
@@ -56,16 +54,8 @@ def log(friend, message)
   puts "New message from Friend: #{friend}"
 end
 
-def friends
-  @log.keys
-end
-
 def friends?(friend)
   @log.key?(friend)
-end
-
-def messages(friend)
-  @log[friend]
 end
 
 Bot.on(:message) do |message|
@@ -86,7 +76,7 @@ Bot.on(:message) do |message|
   else
     text.puts <<-TEXT
 Hi friend! Lets play Go! 
-Just send me a move like this: 3,3 OR 1,1 OR 9,9
+Just send me a move like this: 3,3 OR 0,0 OR 8,8
 If you want to start a new game, just say "resign" ^^
 I'll go first =).
     TEXT
@@ -107,6 +97,7 @@ I'll go first =).
 
   puts "Bot sending message: #{text}"
 end
+
 
 Facebook::Messenger.configure do |config|
   config.access_token = 'EAAJmZAsyf5M8BAJzDyBu6KKI5X3VARSP5VARSNnyfPxFOWDnulZCL2AM71CBzXQ3snD69ZAZC1AXZBLY7SVHHWuYq9cFYTg1yWMoZAHBoi0H4OBQBtgjgSYFf5bqN7eFAGaglQpZAWV2u96XCV6eC6GUEkzriy56TmvTrQ63jgHlwZDZD'
