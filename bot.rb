@@ -73,7 +73,7 @@ Bot.on(:message) do |message|
     if said =~ /resign/
       new_game(friend, text)
     elsif said =~ /(\d),(\d)/
-      [x, y] = said.match(/(\d),(\d)/)[1..2]
+      x, y = said.match(/(\d),(\d)/)[1..2]
       play(friend, x, y, text)
     else
       text.puts "Sorry, I don't know that one..."
