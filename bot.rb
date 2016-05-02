@@ -89,8 +89,7 @@ I'll go first =).
     new_game(friend)
   end
   text.puts games[friend].board.to_s
-  text.rewind
-  text = text.to_s
+  text = text.string
 
   log(message.sender, message)
 
