@@ -16,8 +16,11 @@ def games
   @games
 end
 
-def new_game(friend)
+def new_game(friend, text)
   @games[friend] = Game.new(board: 9)
+  puts "Starting new game"
+  text.puts "So let's start a new game."
+  random_bot_move(friend, text)
 end
 
 def play(friend, x, y, text)
@@ -27,6 +30,7 @@ def play(friend, x, y, text)
   y -= 1
   game = @games[friend]
   game.white(x, y)
+  puts "Friend playing at x: #{x}, y: #{y}"
   random_bot_move(friend, text)
 end
 
@@ -37,6 +41,7 @@ def random_bot_move(friend, text)
   possible_moves.shuffle.each do |x, y|
     begin
       game.black(x, y)
+      puts "Bot playing at x: #{x}, y: #{y}"
       return
     rescue Game::IllegalMove
     end
