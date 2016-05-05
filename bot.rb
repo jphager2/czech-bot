@@ -1,4 +1,5 @@
 require 'active_support/inflector'
+require 'open-uri'
 
 include Facebook::Messenger
 
@@ -39,7 +40,8 @@ module CzechBot
 
   class LatestHomeworkResponse < DefaultResponse
     def text
-      "UC: S. 40, C. 8"
+      file = open('https://gist.githubusercontent.com/jphager2/dd316998b9988fcca00f1e3068165bc5/raw/2a12985b7b7ededce6f0a3f0c30244d58c80bc04/Homework')
+      file.readline
     end
   end
 end
