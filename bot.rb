@@ -3,11 +3,12 @@ include Facebook::Messenger
 puts "Bot Coming online"
 
 module CzechBot
-  def log(string)
+  def self.log(string)
     $stderr.puts(string)
   end
 
   class Response
+
     attr_reader :message, :sender
     def initialize(message)
       @message = message.text
@@ -25,7 +26,7 @@ module CzechBot
 end
 
 Bot.on(:message) do |message|
-  puts "Got a message from: #{message.sender}"
+  CzechBot.log "Got a message from: #{message.sender}"
 
   response = CzechBot::Response.new(message)
 
@@ -36,7 +37,7 @@ Bot.on(:message) do |message|
     }
   )
 
-  puts "Saying: #{response.message.inspect}"
+  CzechBot.log "Saying: #{response.text.inspect}"
 end
 
 
