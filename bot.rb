@@ -1,13 +1,26 @@
+require 'active_support/inflector'
+
 include Facebook::Messenger
 
 puts "Bot Coming online"
 
 module CzechBot
+  extend ActiveSupport::Inflector
+
   def self.log(string)
     $stderr.puts(string)
   end
 
-  class Response
+  def self.respond_to(message)
+    case transliterate(message.text.to_s)
+    when /domaci ukol/i
+      LatestHomeworkResponse.new(message)
+    else
+      DefaultResponse.new(message)
+    end
+  end
+
+  class DefaultResponse
 
     attr_reader :message, :sender
     def initialize(message)
@@ -23,12 +36,18 @@ module CzechBot
       "Ahoj!"
     end
   end
+
+  class LatestHomeworkResponse < DefaultResponse
+    def text
+      "UC: S. 40, C. 8"
+    end
+  end
 end
 
 Bot.on(:message) do |message|
   CzechBot.log "Got a message from: #{message.sender}"
 
-  response = CzechBot::Response.new(message)
+  response = CzechBot.respond_to(message)
 
   Bot.deliver(
     recipient: response.recipient,
