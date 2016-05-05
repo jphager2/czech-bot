@@ -2,21 +2,41 @@ include Facebook::Messenger
 
 puts "Bot Coming online"
 
-def puts(string)
-  $stderr.puts(string)
+module CzechBot
+  def log(string)
+    $stderr.puts(string)
+  end
+
+  class Response
+    attr_reader :message, :sender
+    def initialize(message)
+      @message = message.text
+      @sender = message.sender
+    end
+
+    def recipient
+      @sender
+    end
+
+    def text
+      "Ahoj!"
+    end
+  end
 end
 
 Bot.on(:message) do |message|
   puts "Got a message from: #{message.sender}"
 
+  response = CzechBot::Response.new(message)
+
   Bot.deliver(
-    recipient: message.sender,
+    recipient: response.recipient,
     message: {
-      text: "Ahoj!"
+      text: response.text
     }
   )
 
-  puts "Saying: 'Ahoj'"
+  puts "Saying: #{response.message.inspect}"
 end
 
 
