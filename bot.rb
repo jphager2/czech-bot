@@ -7,6 +7,7 @@ def puts(string)
 end
 
 Bot.on(:message) do |message|
+  puts "Got a message from: #{message.sender}"
 
   Bot.deliver(
     recipient: message.sender,
@@ -14,6 +15,8 @@ Bot.on(:message) do |message|
       text: "Ahoj!"
     }
   )
+
+  puts "Saying: 'Ahoj'"
 end
 
 
