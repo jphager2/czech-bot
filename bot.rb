@@ -25,8 +25,11 @@ module CzechBot
 
   def self.respond_to_postback(postback)
     case postback.payload
-    when "VOCAB_ALL"
-      AllVocabResponse.new(postback)
+    when /VOCAB_ALL/
+      index = postback.payload.match(/#(\d+)/)
+      response = AllVocabResponse.new(postback)
+      response.index = index[1].to_i if index
+      response
     when "VOCAB_NEW"
       NewVocabResponse.new(postback)
     when "VOCAB_ONE"
@@ -122,15 +125,32 @@ module CzechBot
     end
   end
 
-  class AllVocabResponse < DefaultResponse
+  class AllVocabResponse < VocabResponse
+    attr_writer :index
+
     private
+    def index
+      @index || 0
+    end
+
     def vocab_list
       @vocab_list ||= fetch_vocab_list
     end
 
     def fetch_vocab_list
       file = open('https://gist.githubusercontent.com/jphager2/2654911ba1ddf3eef28a403ad9b3f563/raw/Vocabulary')
-      file.each_line.first(20).map { |l| l.strip.split("|") }
+      file.first(index + 1).last.strip.split("|")
+    end
+
+    def attachment
+      { type: 'template',
+        payload: {
+          template_type: 'button',
+          text: text,
+          buttons: [{ 
+            type: 'postback', 
+            title: 'Další', 
+            payload: "VOCAB_ALL##{index + 1}" }]}}
     end
 
     def text
