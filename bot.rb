@@ -35,7 +35,7 @@ module CzechBot
   end
 
   def self.user_data(person)
-    id = person[:id]
+    id = person["id"]
     fields = %w{ first_name last_name profile_pic locale timezone gender }
 
     query = Bot.default_options[:query].merge(fields: fields.join(","))
