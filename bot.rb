@@ -53,6 +53,10 @@ module CzechBot
     def message
       { text: text }
     end
+
+    def deliver?
+      message && !message.empty?
+    end
   end
 
   class LatestHomeworkResponse < DefaultResponse
