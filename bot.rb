@@ -46,10 +46,6 @@ module CzechBot
       @sender
     end
 
-    def text
-      "Ahoj!"
-    end
-
     def message
       { text: text }
     end
@@ -57,9 +53,15 @@ module CzechBot
     def deliver?
       message && !message.empty?
     end
+
+    private
+    def text
+      "Ahoj!"
+    end
   end
 
   class LatestHomeworkResponse < DefaultResponse
+    private
     def text
       file = open('https://gist.githubusercontent.com/jphager2/dd316998b9988fcca00f1e3068165bc5/raw/2a12985b7b7ededce6f0a3f0c30244d58c80bc04/Homework')
       file.readline
@@ -71,6 +73,7 @@ module CzechBot
       { attachment: attachment }
     end
 
+    private
     def attachment
       { type: 'template',
         payload: {
@@ -81,15 +84,10 @@ module CzechBot
             { type: 'postback', title: 'Jedno', payload: 'VOCAB_ONE' },
             { type: 'postback', title: 'Nové', payload: 'VOCAB_NEW' }]}}
     end
-
-    def deliver?
-      CzechBot.log("Vocab wants to send message: #{message.inspect}")
-
-      true
-    end
   end
 
   class AllVocabResponse < DefaultResponse
+    private
     def vocab_list
       [["cesta", "robot"], ["spisovatel"]]
     end
@@ -104,12 +102,14 @@ module CzechBot
   end
 
   class NewVocabResponse < AllVocabResponse
+    private
     def text
       vocab_list.first.map { |word| display_vocab(word) }.join("\n\n")
     end
   end
 
   class OneVocabResponse < AllVocabResponse
+    private
     def new_vocab_word
       vocab_list.first.shuffle.first
     end
@@ -142,7 +142,7 @@ Bot.on(:message) do |message|
     )
   end
 
-  CzechBot.log "Saying: #{response.text.inspect}, To: #{response.recipient}"
+  CzechBot.log "Sending: #{response.message.inspect}, To: #{response.recipient}"
 end
 
 Bot.on(:postback) do |postback|
@@ -157,7 +157,7 @@ Bot.on(:postback) do |postback|
     )
   end
 
-  CzechBot.log "Saying: #{response.text.inspect}, To: #{response.recipient}"
+  CzechBot.log "Sending: #{response.message.inspect}, To: #{response.recipient}"
 end
 
 Facebook::Messenger.configure do |config|
