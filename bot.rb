@@ -130,7 +130,7 @@ module CzechBot
 
     def fetch_vocab_list
       file = open('https://gist.githubusercontent.com/jphager2/2654911ba1ddf3eef28a403ad9b3f563/raw/Vocabulary')
-      file.lines.map { |l| l.strip.split("|") }
+      file.each_line.first(20).map { |l| l.strip.split("|") }
     end
 
     def text
