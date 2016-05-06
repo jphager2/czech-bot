@@ -36,7 +36,7 @@ module CzechBot
 
   def self.user_data(person)
     id = person["id"]
-    UserDate.fetch(id)
+    UserData.fetch(id)
   end
 
   class UserData
