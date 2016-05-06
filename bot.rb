@@ -12,12 +12,25 @@ module CzechBot
     $stderr.puts(string)
   end
 
-  def self.respond_to(message)
+  def self.respond_to_message(message)
     case transliterate(message.text.to_s)
-    when /domaci ukol/i
+    when /\bdomaci\b\s*ukol\b/i, /\bh(ome)?\b*\s*w(ork)\b/i
       LatestHomeworkResponse.new(message)
+    when /\bslov/
+      VocabResponse.new(message)
     else
       DefaultResponse.new(message)
+    end
+  end
+
+  def self.respond_to_postback(postback)
+    case postback.payload
+    when "VOCAB_ALL"
+      AllVocabResponse.new(postback)
+    when "VOCAB_NEW"
+      NewVocabResponse.new(postback)
+    when "VOCAB_ONE"
+      OneVocabResponse.new(postback)
     end
   end
 
@@ -36,6 +49,10 @@ module CzechBot
     def text
       "Ahoj!"
     end
+
+    def message
+      { text: text }
+    end
   end
 
   class LatestHomeworkResponse < DefaultResponse
@@ -44,23 +61,94 @@ module CzechBot
       file.readline
     end
   end
+
+  class VocabResponse < DefaultResponse
+    def message
+      { attachment: attachment }
+    end
+
+    def attachment
+      { type: 'template',
+        payload: {
+          template_type: 'button',
+          text: '',
+          buttons: [
+            { type: 'postback', title: 'Všechno', payload: 'VOCAB_ALL' },
+            { type: 'postback', title: 'Jedno', payload: 'VOCAB_ONE' },
+            { type: 'postback', title: 'Nové', payload: 'VOCAB_NEW' }]}}
+    end
+  end
+
+  class AllVocabResponse < DefaultResponse
+    def vocab_list
+      [["cesta", "robot"], ["spisovatel"]]
+    end
+
+    def text
+      vocab_list.flatten.map { |word| display_vocab(word) }.join("\n\n")
+    end
+
+    def display_vocab(word)
+      word
+    end
+  end
+
+  class NewVocabResponse < AllVocabResponse
+    def text
+      vocab_list.first.map { |word| display_vocab(word) }.join("\n\n")
+    end
+  end
+
+  class OneVocabResponse < AllVocabResponse
+    def new_vocab_word
+      vocab_list.first.shuffle.first
+    end
+
+    def old_vocab_word
+      vocab_list.drop(1).flatten.shuffle.first
+    end
+
+    def text
+      if rand > 0.5
+        word = old_vocab_word
+      end
+
+      word ||= new_vocab_word
+
+      display_vocab(word)
+    end
+  end
 end
 
 Bot.on(:message) do |message|
   CzechBot.log "Got a message from: #{message.sender}"
 
-  response = CzechBot.respond_to(message)
+  response = CzechBot.respond_to_message(message)
 
-  Bot.deliver(
-    recipient: response.recipient,
-    message: {
-      text: response.text
-    }
-  )
+  if response.deliver?
+    Bot.deliver(
+      recipient: response.recipient,
+      message: response.message
+    )
+  end
 
   CzechBot.log "Saying: #{response.text.inspect}"
 end
 
+Bot.on(:postback) do |postback|
+  CzechBot.log "Got a postback from: #{postback.sender}"
+
+  response = CzechBot.respond_to_postback(postback)
+
+  if response.deliver?
+    Bot.deliver(
+      recipient: response.recipient,
+      message: response.message
+    )
+  end
+
+  CzechBot.log "Saying: #{response.text.inspect}"
+end
 
 Facebook::Messenger.configure do |config|
   config.access_token = 'EAAYqja1OZBYkBAAx3Dd2jcsvpAa2QUPHVNrzqTui4PMtmlxFkS83kyagKokSYNVgBnrS1quxCEyxSQXVZA2vCxWq6k0KclfS36CfREQLkF38uhgVYrtQeioPZAcBWWBW0AnwSnqC2OI96b0P5pDEOXpWKymEcPmu1VDYWpiwwZDZD'
