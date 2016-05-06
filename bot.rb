@@ -41,6 +41,8 @@ module CzechBot
       fields: %w{ first_name last_name profile_pic locale timezone gender })
     response = Bot.get "/#{id}", query: query, format: :json
 
+    CzechBot.log("Got data for user: #{id}, data: #{response.inspect}")
+
     UserData.new(response)
   end
 
@@ -76,13 +78,13 @@ module CzechBot
       message && !message.empty?
     end
 
-    def person
-      @person ||= CzechBot.user_data(sender)
+    def user
+      @user ||= CzechBot.user_data(sender)
     end
 
     private
     def text
-      "Ahoj, #{person.first_name}!"
+      "Ahoj, #{user.first_name}!"
     end
   end
 
