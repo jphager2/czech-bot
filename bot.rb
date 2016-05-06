@@ -78,7 +78,7 @@ module CzechBot
       { type: 'template',
         payload: {
           template_type: 'button',
-          text: '',
+          text: 'Co se chceš učit?',
           buttons: [
             { type: 'postback', title: 'Všechno', payload: 'VOCAB_ALL' },
             { type: 'postback', title: 'Jedno', payload: 'VOCAB_ONE' },
