@@ -16,7 +16,7 @@ module CzechBot
     case transliterate(message.text.to_s)
     when /\bdomaci\b\s*ukol\b/i, /\bh(ome)?\b*\s*w(ork)\b/i
       LatestHomeworkResponse.new(message)
-    when /\bslov/
+    when /\bslov/i
       VocabResponse.new(message)
     else
       DefaultResponse.new(message)
