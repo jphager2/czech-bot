@@ -99,7 +99,7 @@ module CzechBot
   class LatestHomeworkResponse < DefaultResponse
     private
     def text
-      file = open('https://gist.githubusercontent.com/jphager2/dd316998b9988fcca00f1e3068165bc5/raw/2a12985b7b7ededce6f0a3f0c30244d58c80bc04/Homework')
+      file = open('https://gist.githubusercontent.com/jphager2/2654911ba1ddf3eef28a403ad9b3f563/raw/Homework')
       file.readline
     end
   end
@@ -125,7 +125,12 @@ module CzechBot
   class AllVocabResponse < DefaultResponse
     private
     def vocab_list
-      [["cesta", "robot"], ["spisovatel"]]
+      @vocab_list ||= fetch_vocab_list
+    end
+
+    def fetch_vocab_list
+      file = open('https://gist.githubusercontent.com/jphager2/2654911ba1ddf3eef28a403ad9b3f563/raw/Vocabulary')
+      file.lines.map { |l| l.strip.split("|") }
     end
 
     def text
