@@ -34,6 +34,29 @@ module CzechBot
     end
   end
 
+  def self.user_data(person)
+    id = person[:id]
+
+    query = Bot.default_options[:query].merge(
+      fields: %w{ first_name last_name profile_pic locale timezone gender })
+    response = Bot.get "/#{id}", query: query, format: :json
+
+    UserData.new(response)
+  end
+
+  class UserData
+    attr_reader :first_name, :last_name, :profile_pic, :locale, :timezone, 
+      :gender
+    def initialize(data)
+      @first_name = data["first_name"]
+      @last_name = data["last_name"]
+      @profile_pic = data["profile_pic"]
+      @locale = data["locale"]
+      @timezone = data["timezone"]
+      @gender = data["gender"]
+    end
+  end
+
   class DefaultResponse
 
     attr_reader :sender
@@ -53,9 +76,13 @@ module CzechBot
       message && !message.empty?
     end
 
+    def person
+      @person ||= CzechBot.user_data(sender)
+    end
+
     private
     def text
-      "Ahoj!"
+      "Ahoj, #{person.first_name}!"
     end
   end
 
