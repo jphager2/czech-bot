@@ -36,19 +36,27 @@ module CzechBot
 
   def self.user_data(person)
     id = person["id"]
-    fields = %w{ first_name last_name profile_pic locale timezone gender }
-
-    query = Bot.default_options[:query].merge(fields: fields.join(","))
-    response = Bot.get "/#{id}", query: query, format: :json
-
-    CzechBot.log("Got data for user: #{id}, data: #{response.inspect}")
-
-    UserData.new(response)
+    UserDate.fetch(id)
   end
 
   class UserData
-    attr_reader :first_name, :last_name, :profile_pic, :locale, :timezone, 
-      :gender
+    include HTTParty
+
+    base_uri Bot.base_uri.sub(/\/me$/, '')
+
+    FIELDS = %i{ first_name last_name profile_pic locale timezone gender }
+
+    def self.fetch(id)
+      query = Bot.default_options[:query].merge(fields: FIELDS.join(","))
+      response = get "/#{id}", query: query, format: :json
+
+      CzechBot.log("Got data for user: #{id}, data: #{response.inspect}")
+
+      new(response)
+    end
+
+    attr_reader *FIELDS
+
     def initialize(data)
       @first_name = data["first_name"]
       @last_name = data["last_name"]
