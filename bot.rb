@@ -36,9 +36,8 @@ module CzechBot
 
   class DefaultResponse
 
-    attr_reader :message, :sender
+    attr_reader :sender
     def initialize(message)
-      @message = message.text
       @sender = message.sender
     end
 
