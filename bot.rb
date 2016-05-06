@@ -36,9 +36,9 @@ module CzechBot
 
   def self.user_data(person)
     id = person[:id]
+    fields = %w{ first_name last_name profile_pic locale timezone gender }
 
-    query = Bot.default_options[:query].merge(
-      fields: %w{ first_name last_name profile_pic locale timezone gender })
+    query = Bot.default_options[:query].merge(fields: field.join(","))
     response = Bot.get "/#{id}", query: query, format: :json
 
     CzechBot.log("Got data for user: #{id}, data: #{response.inspect}")
