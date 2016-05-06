@@ -81,6 +81,12 @@ module CzechBot
             { type: 'postback', title: 'Jedno', payload: 'VOCAB_ONE' },
             { type: 'postback', title: 'Nové', payload: 'VOCAB_NEW' }]}}
     end
+
+    def deliver?
+      CzechBot.log("Vocab wants to send message: #{message.inspect}")
+
+      true
+    end
   end
 
   class AllVocabResponse < DefaultResponse
@@ -136,7 +142,7 @@ Bot.on(:message) do |message|
     )
   end
 
-  CzechBot.log "Saying: #{response.text.inspect}"
+  CzechBot.log "Saying: #{response.text.inspect}, To: #{response.recipient}"
 end
 
 Bot.on(:postback) do |postback|
@@ -151,7 +157,7 @@ Bot.on(:postback) do |postback|
     )
   end
 
-  CzechBot.log "Saying: #{response.text.inspect}"
+  CzechBot.log "Saying: #{response.text.inspect}, To: #{response.recipient}"
 end
 
 Facebook::Messenger.configure do |config|
