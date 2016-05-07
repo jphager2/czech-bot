@@ -155,7 +155,11 @@ module CzechBot
     attr_writer :index
 
     def message
-      { attachment: attachment }
+      if vocab_list[index + 1]
+        { attachment: attachment }
+      else
+        { text: text }
+      end
     end
 
     def deliver?
