@@ -125,21 +125,46 @@ module CzechBot
     end
   end
 
-  class AllVocabResponse < VocabResponse
-    attr_writer :index
-
-    private
-    def index
-      @index || 0
-    end
-
+  module VocabList
     def vocab_list
       @vocab_list ||= fetch_vocab_list
     end
 
     def fetch_vocab_list
       file = open('https://gist.githubusercontent.com/jphager2/2654911ba1ddf3eef28a403ad9b3f563/raw/Vocabulary')
-      file.first(index + 1).last.strip.split("|")
+      file.each_line.to_a
+    end
+
+    def words_at(index_or_range)
+      lines = Array(vocab_list[index_or_range])
+      lines.map { |line| line.strip.split("|") }.flatten
+    end
+
+    def display_at(i)
+      words_at(i).map { |word| display_vocab(word) }.join("\n\n")
+    end
+
+    def display_vocab(word)
+      word
+    end
+  end
+
+  class AllVocabResponse < DefaultResponse
+    include VocabList
+
+    attr_writer :index
+
+    def message
+      { attachment: attachment }
+    end
+
+    def deliver?
+      vocab_list[index]
+    end
+
+    private
+    def index
+      @index || 0
     end
 
     def attachment
@@ -154,29 +179,29 @@ module CzechBot
     end
 
     def text
-      vocab_list.flatten.map { |word| display_vocab(word) }.join("\n\n")
-    end
-
-    def display_vocab(word)
-      word
+      display_at(index)
     end
   end
 
-  class NewVocabResponse < AllVocabResponse
+  class NewVocabResponse < DefaultResponse
+    include VocabList
+
     private
     def text
-      vocab_list.first.map { |word| display_vocab(word) }.join("\n\n")
+      display_at(0)
     end
   end
 
-  class OneVocabResponse < AllVocabResponse
+  class OneVocabResponse < DefaultResponse
+    include VocabList
+
     private
     def new_vocab_word
-      vocab_list.first.shuffle.first
+      words_at(0).shuffle.first
     end
 
     def old_vocab_word
-      vocab_list.drop(1).flatten.shuffle.first
+      words_at(1..-1).shuffle.first
     end
 
     def text
