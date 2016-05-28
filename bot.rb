@@ -136,7 +136,7 @@ module CzechBot
     end
   end
 
-  class TranslationResponse < Default Response
+  class TranslationResponse < DefaultResponse
 
     attr_reader :phrase
     def initialize(message)
