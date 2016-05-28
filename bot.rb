@@ -18,6 +18,8 @@ module CzechBot
       LatestHomeworkResponse.new(message)
     when /\bslov/i
       VocabResponse.new(message)
+    when /^co znamena /i
+      TranslationResponse.new(message)
     else
       DefaultResponse.new(message)
     end
@@ -40,6 +42,41 @@ module CzechBot
   def self.user_data(person)
     id = person["id"]
     UserData.fetch(id)
+  end
+
+  def self.translate(phrase)
+    Translater.translate(phrase)
+  end
+
+  class Translater
+    include HTTParty
+
+    base_uri "https://www.googleapis.com/"
+    
+    def self.translate(phrase)
+      new(phrase).translate
+    end
+
+    def initialize(raw)
+      @raw = raw
+    end
+
+    def translate
+      @translation ||= fetch_translation
+    end
+
+    private
+    def fetch_translation
+      query = { q: @raw, target: :en, source: :cs, key: "AIzaSyD5GC-Z7NUKw26NdkjVfXZ9YdungwPs0_g" }
+      response = get("/language/translate/v2", query: query, format: :json, verify: false)
+      if response.success?
+        JSON.parse(response.body)["data"]["translations"][0]["translatedText"]
+      end
+    end
+
+    def get(*args)
+      self.class.get(*args)
+    end
   end
 
   class UserData
@@ -96,6 +133,32 @@ module CzechBot
     private
     def text
       "Ahoj, #{user.first_name}!"
+    end
+  end
+
+  class TranslationResponse < Default Response
+
+    attr_reader :phrase
+    def initialize(message)
+      super
+      @phrase = parse_phrase(message.text)
+    end
+
+    private
+    def text
+      "#{phrase.inspect} znamená #{translation.inspect}"
+    end
+
+    def translation
+      @_translation ||= CzechBot.translate(phrase)
+    end
+    
+    def parse_phrase(phrase)
+      phase = phrase.strip
+      match = phrase.match(/^["'](.+)["']/)
+      phrase = (match && match[1]) || phrase[11..-1]
+      phrase.sub!(/\s+?$/, '')
+      phrase
     end
   end
 
