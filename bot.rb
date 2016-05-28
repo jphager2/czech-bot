@@ -154,9 +154,9 @@ module CzechBot
     end
     
     def parse_phrase(phrase)
-      phase = phrase.strip
+      phrase = phrase.strip[11..-1]
       match = phrase.match(/^["'](.+)["']/)
-      phrase = (match && match[1]) || phrase[11..-1]
+      phrase = match[1] if match
       phrase.sub!(/\s+?$/, '')
       phrase
     end
