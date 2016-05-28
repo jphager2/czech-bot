@@ -157,7 +157,7 @@ module CzechBot
       phrase = phrase.strip[11..-1]
       match = phrase.match(/^["'](.+)["']/)
       phrase = match[1] if match
-      phrase.sub!(/\s*?$/, '')
+      phrase.sub!(/\s*\?$/, '')
       phrase
     end
   end
