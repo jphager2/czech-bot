@@ -16,10 +16,10 @@ module CzechBot
     case transliterate(message.text.to_s)
     when /\bdomaci\b\s*ukol\b/i, /\bh(ome)?\b*\s*w(ork)\b/i
       LatestHomeworkResponse.new(message)
+    when /^co (to )?znamena\b/i
+      TranslationResponse.new(message)
     when /\bslov/i
       VocabResponse.new(message)
-    when /^co znamena /i
-      TranslationResponse.new(message)
     else
       DefaultResponse.new(message)
     end
