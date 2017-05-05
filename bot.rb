@@ -1,5 +1,8 @@
 require 'active_support/inflector'
 require 'open-uri'
+require 'dotenv'
+
+Dotenv.load
 
 include Facebook::Messenger
 
@@ -314,8 +317,8 @@ Bot.on(:postback) do |postback|
 end
 
 Facebook::Messenger.configure do |config|
-  config.access_token = 'EAAYqja1OZBYkBAAx3Dd2jcsvpAa2QUPHVNrzqTui4PMtmlxFkS83kyagKokSYNVgBnrS1quxCEyxSQXVZA2vCxWq6k0KclfS36CfREQLkF38uhgVYrtQeioPZAcBWWBW0AnwSnqC2OI96b0P5pDEOXpWKymEcPmu1VDYWpiwwZDZD'
-  config.verify_token = 'ceskeretardy'
+  config.access_token = ENV['API_TOKEN']
+  config.verify_token = ENV['VERIFY_TOKEN']
 end
 
 Facebook::Messenger::Subscriptions.subscribe
